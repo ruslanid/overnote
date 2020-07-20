@@ -8,13 +8,13 @@ import org.springframework.security.config.web.servlet.invoke
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig : WebSecurityConfigurerAdapter() {
-
-    // TODO: Disable CORS since we will use JWT
+class SecurityConfig : WebSecurityConfigurerAdapter() {s
 
     override fun configure(http: HttpSecurity?) {
         http {
             httpBasic {}
+            csrf { disable() }
+            cors { disable() }
             authorizeRequests {
                 authorize("/**", permitAll)
             }
