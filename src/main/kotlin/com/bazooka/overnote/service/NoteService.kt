@@ -1,5 +1,6 @@
 package com.bazooka.overnote.service
 
+import com.bazooka.overnote.exception.ResourceNotFoundException
 import com.bazooka.overnote.model.Note
 import com.bazooka.overnote.repository.NoteRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,10 +23,8 @@ class NoteService {
     fun findNoteById(noteId: Int): Note {
         val result: Optional<Note> = noteRepository.findById(noteId)
 
-        // TODO: Add custom ResourceNotFoundException (will be handle by global exception handler (AOP)
-
         if (result.isEmpty)
-            throw RuntimeException("Note with id $noteId not found")
+            throw ResourceNotFoundException("Note with ID: $noteId was not found")
 
         return result.get()
     }
