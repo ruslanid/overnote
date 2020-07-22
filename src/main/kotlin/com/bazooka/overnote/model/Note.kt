@@ -1,8 +1,8 @@
 package com.bazooka.overnote.model
 
+import org.hibernate.validator.constraints.NotBlank
 import java.util.*
 import javax.persistence.*
-import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name="notes")
@@ -11,15 +11,12 @@ data class Note(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Int,
 
-    // TODO: Add model level bean (object) validation
-
     @Column(nullable = false)
-//    @NotBlank(message = "Title can't be blank")
-    val title: String,
+    @get: NotBlank(message = "Title cannot be null")
+    val title: String?,
 
-    @Column(nullable = false, length = 2000)
-//    @NotBlank(message = "Body can't be blank")
-    val body: String,
+    @Column(length = 2000)
+    val body: String?,
 
     @Column(name = "created_at", updatable = false)
     var createdAt: Date?,

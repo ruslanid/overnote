@@ -5,7 +5,7 @@ import com.bazooka.overnote.service.EntityValidationService
 import com.bazooka.overnote.service.NoteService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
-import org.springframework.validation.BindingResult
+import org.springframework.validation.Errors
 import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
@@ -24,9 +24,9 @@ class NoteController() {
             noteService.findAll()
 
     @PostMapping("/notes")
-    fun createNewNote(@Valid @RequestBody note: Note, result: BindingResult): ResponseEntity<*> {
-        if (result.hasErrors()) {
-            return entityValidationService.validateFields(result)
+    fun createNewNote(@Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
+        if (errors.hasErrors()) {
+            return entityValidationService.validateFields(errors)
         }
 
         val note = noteService.saveNote(note);
@@ -41,10 +41,10 @@ class NoteController() {
 
     @PutMapping("/notes/{id}")
     fun updateNoteById(@PathVariable(value = "id") noteId: Int,
-                          @Valid @RequestBody newNote: Note, result: BindingResult): ResponseEntity<*> {
+                          @Valid @RequestBody newNote: Note, errors: Errors): ResponseEntity<*> {
 
-        if (result.hasErrors()) {
-            return entityValidationService.validateFields(result)
+        if (errors.hasErrors()) {
+            return entityValidationService.validateFields(errors)
         }
 
         val updatedNote: Note = noteService.updateNoteById(noteId, newNote)

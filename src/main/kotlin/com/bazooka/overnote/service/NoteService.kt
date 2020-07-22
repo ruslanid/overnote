@@ -5,7 +5,6 @@ import com.bazooka.overnote.model.Note
 import com.bazooka.overnote.repository.NoteRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.lang.RuntimeException
 import java.util.*
 
 @Service
