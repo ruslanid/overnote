@@ -1,8 +1,8 @@
 package com.bazooka.overnote.model
 
-import org.hibernate.validator.constraints.NotBlank
 import java.util.*
 import javax.persistence.*
+import javax.validation.constraints.NotBlank
 
 @Entity
 @Table(name="notes")
@@ -12,7 +12,7 @@ data class Note(
     val id: Int,
 
     @Column(nullable = false)
-    @get: NotBlank(message = "Title cannot be null")
+    @field: NotBlank(message = "Title cannot be null")
     val title: String?,
 
     @Column(length = 2000)
