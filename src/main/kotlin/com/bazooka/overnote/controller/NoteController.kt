@@ -29,8 +29,8 @@ class NoteController() {
             return entityValidationService.validateFields(errors)
         }
 
-        val note = noteService.saveNote(note);
-        return ResponseEntity.ok(note)
+        val newNote = noteService.saveNote(note);
+        return ResponseEntity.ok(newNote)
     }
 
     @GetMapping("/notes/{id}")

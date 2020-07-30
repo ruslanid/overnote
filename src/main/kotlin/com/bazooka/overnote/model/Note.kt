@@ -9,10 +9,10 @@ import javax.validation.constraints.NotBlank
 data class Note(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Int,
+    val id: Int = 0,
 
     @Column(nullable = false)
-    @field: NotBlank(message = "Title cannot be null")
+    @field: NotBlank(message = "Title cannot be blank")
     val title: String?,
 
     @Column(length = 2000)

@@ -13,6 +13,6 @@ class CustomExceptionHandler: ResponseEntityExceptionHandler() {
     @ExceptionHandler
     fun handleResourceNotFound(e: ResourceNotFoundException, request: WebRequest): ResponseEntity<ResourceNotFoundResponse> {
         val errorResponse = ResourceNotFoundResponse(e.message!!)
-        return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
     }
 }
