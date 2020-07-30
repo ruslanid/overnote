@@ -48,8 +48,7 @@ class NoteController() {
         }
 
         val updatedNote: Note = noteService.updateNoteById(noteId, newNote)
-        return ResponseEntity.ok().body(updatedNote)
-    }
+        return ResponseEntity.ok().body(updatedNote) }
 
     @DeleteMapping("/notes/{id}")
     fun deleteNoteById(@PathVariable(value = "id") noteId: Int): ResponseEntity<Void> {
