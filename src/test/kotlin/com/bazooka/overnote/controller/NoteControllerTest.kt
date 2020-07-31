@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.*
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @WebMvcTest(NoteController::class, EntityValidationService::class)
+@DisplayName("NoteController")
 internal class NoteControllerTest {
 
     @Autowired
@@ -37,6 +39,7 @@ internal class NoteControllerTest {
     }
 
     @Test
+    @DisplayName("getAllNotes()")
     fun getAllNotes() {
         `when`(noteService.findAll()).thenReturn(notes)
 
@@ -54,6 +57,7 @@ internal class NoteControllerTest {
     }
 
     @Test
+    @DisplayName("createNewNoteValid()")
     fun createNewNoteValid() {
         `when`(noteService.saveNote(any())).thenReturn(notes[0])
 
@@ -70,7 +74,10 @@ internal class NoteControllerTest {
     }
 
     @Test
+    @DisplayName("createNewNoteNotValid()")
     fun createNewNoteNotValid() {
+        // TODO: verify invocation of entityValidationService
+
          mockMvc.perform(post("/api/notes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(Note(0, null, "Body 1", null, null))))
@@ -79,10 +86,11 @@ internal class NoteControllerTest {
              .andExpect(jsonPath("$").isMap)
              .andExpect(jsonPath("$.title", `is`("Title cannot be blank")))
 
-        verify(noteService, times(0)).saveNote(any())
+        verify(noteService, never()).saveNote(any())
     }
 
     @Test
+    @DisplayName("getNoteById()")
     fun getNoteById() {
         `when`(noteService.findNoteById(anyInt())).thenReturn(notes[0])
 
@@ -97,6 +105,7 @@ internal class NoteControllerTest {
     }
 
     @Test
+    @DisplayName("updateNoteByIdValid()")
     fun updateNoteByIdValid() {
         val updatedNote = Note(1, "Title 22", "Body 22", null, null)
 
@@ -105,7 +114,7 @@ internal class NoteControllerTest {
         mockMvc.perform(put("/api/notes/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(Note(1, "Title 22", "Body 22", null, null))))
-                .andExpect(status().isOk)
+            .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$").isMap)
             .andExpect(jsonPath("$.id", `is`(1)))
@@ -115,7 +124,10 @@ internal class NoteControllerTest {
     }
 
     @Test
+    @DisplayName("updateNoteByIdNotValid()")
     fun updateNoteByIdNotValid() {
+        // TODO: verify invocation of entityValidationService
+
         mockMvc.perform(put("/api/notes/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(Note(1, "", "Body 1", null, null))))
@@ -124,10 +136,11 @@ internal class NoteControllerTest {
             .andExpect(jsonPath("$").isMap)
             .andExpect(jsonPath("$.title", `is`("Title cannot be blank")))
 
-        verify(noteService, times(0)).saveNote(any())
+        verify(noteService, never()).saveNote(any())
     }
 
     @Test
+    @DisplayName("deleteNoteById()")
     fun deleteNoteById() {
         mockMvc.perform(delete("/api/notes/{id}", 1))
             .andExpect(status().isOk)
