@@ -22,7 +22,11 @@ data class Note(
     var createdAt: Date?,
 
     @Column(name="updated_at")
-    var updatedAt: Date?
+    var updatedAt: Date?,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private val category: Category? = null
 
 ) {
 
