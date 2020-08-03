@@ -26,7 +26,7 @@ data class Note(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private val category: Category? = null
+    val category: Category? = null
 
 ) {
 
