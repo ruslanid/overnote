@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CategoryRepository : CrudRepository<Category, Int> {
+
 }

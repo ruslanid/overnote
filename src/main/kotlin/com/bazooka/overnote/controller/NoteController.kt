@@ -11,7 +11,7 @@ import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api")
-class NoteController() {
+class NoteController {
 
     @Autowired
     private lateinit var noteService: NoteService
@@ -23,13 +23,15 @@ class NoteController() {
     fun getAllNotes(): Iterable<Note> =
             noteService.findAll()
 
-    @PostMapping("/notes")
-    fun createNewNote(@Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
+    @PostMapping("/categories/{categoryId}/notes")
+    fun createNewNote(@PathVariable categoryId: Int,
+                        @Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
+
         if (errors.hasErrors()) {
             return entityValidationService.validateFields(errors)
         }
 
-        val newNote = noteService.saveNote(note);
+        val newNote = noteService.saveNote(categoryId, note)
         return ResponseEntity.ok(newNote)
     }
 
@@ -39,15 +41,19 @@ class NoteController() {
         return ResponseEntity.ok().body(note)
     }
 
-    @PutMapping("/notes/{id}")
-    fun updateNoteById(@PathVariable(value = "id") noteId: Int,
-                          @Valid @RequestBody newNote: Note, errors: Errors): ResponseEntity<*> {
+    @GetMapping("/categories/{categoryId}/notes")
+    fun getNotesByCategoryId(@PathVariable categoryId: Int): Iterable<Note> =
+            noteService.findNotesByCategoryId(categoryId)
+
+    @PutMapping("categories/{categoryId}/notes/{noteId}")
+    fun updateNoteById(@PathVariable categoryId: Int, @PathVariable noteId: Int,
+                        @Valid @RequestBody newNote: Note, errors: Errors): ResponseEntity<*> {
 
         if (errors.hasErrors()) {
             return entityValidationService.validateFields(errors)
         }
 
-        val updatedNote: Note = noteService.updateNoteById(noteId, newNote)
+        val updatedNote: Note = noteService.updateNoteById(categoryId, noteId, newNote)
         return ResponseEntity.ok().body(updatedNote)
     }
 

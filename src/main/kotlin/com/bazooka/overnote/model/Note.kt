@@ -1,5 +1,6 @@
 package com.bazooka.overnote.model
 
+import com.fasterxml.jackson.annotation.*
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -24,9 +25,10 @@ data class Note(
     @Column(name="updated_at")
     var updatedAt: Date?,
 
+    @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    val category: Category? = null
+    var category: Category? = null
 
 ) {
 

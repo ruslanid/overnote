@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface NoteRepository : CrudRepository<Note, Int> {
-    fun findByTitle(title: String): Note?
+
+    fun findByCategoryId(categoryId: Int): Iterable<Note>
+
 }

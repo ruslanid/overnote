@@ -2,8 +2,8 @@ package com.bazooka.overnote.service
 
 import com.bazooka.overnote.exception.ResourceNotFoundException
 import com.bazooka.overnote.model.Category
-import com.bazooka.overnote.model.Note
 import com.bazooka.overnote.repository.CategoryRepository
+import com.bazooka.overnote.repository.NoteRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -21,12 +21,12 @@ class CategoryService {
           categoryRepository.save(category)
 
   fun findCategoryById(categoryId: Int): Category {
-      val result: Optional<Category> = categoryRepository.findById(categoryId)
+    val result: Optional<Category> = categoryRepository.findById(categoryId)
 
-      if (result.isEmpty)
+    if (result.isEmpty)
         throw ResourceNotFoundException("Category with ID: $categoryId was not found")
 
-      return result.get()
+    return result.get()
   }
 
   fun updateCategoryById(categoryId: Int, newCategory: Category): Category {
