@@ -17,15 +17,18 @@ class NoteService {
 
     @Autowired lateinit var categoryRepository: CategoryRepository
 
-    fun findAll(): Iterable<Note> =
-            noteRepository.findAll()
-
-    fun saveNote(categoryId: Int, note: Note): Note {
-        val category = findCategoryById(categoryId)
-        note.category = category
+    fun saveNote(note: Note): Note {
         return noteRepository.save(note)
     }
 
+    fun saveNoteCategory(note: Note, categoryId: Int): Note {
+        note.category = findCategoryById(categoryId)
+
+        return noteRepository.save(note)
+    }
+
+    fun findAll(): Iterable<Note> =
+            noteRepository.findAll()
 
     fun findNoteById(noteId: Int): Note {
         val result: Optional<Note> = noteRepository.findById(noteId)
@@ -39,10 +42,20 @@ class NoteService {
     fun findNotesByCategoryId(categoryId: Int): Iterable<Note> =
         noteRepository.findByCategoryId(categoryId)
 
-    fun updateNoteById(categoryId: Int, noteId: Int, newNote: Note): Note {
-        val category = findCategoryById(categoryId)
+
+    fun updateNoteCategory(newNote: Note, noteId: Int, categoryId: Int): Note {
         val oldNote = findNoteById(noteId)
-        val updatedNote = oldNote.copy(title = newNote.title, body = newNote.body, category = category)
+        val updatedNote = oldNote.copy(title = newNote.title, body = newNote.body)
+
+        updatedNote.category = findCategoryById(categoryId)
+
+        return noteRepository.save(updatedNote)
+    }
+
+    fun updateNoteById(noteId: Int, newNote: Note): Note {
+        val oldNote = findNoteById(noteId)
+        val updatedNote = oldNote.copy(title = newNote.title, body = newNote.body)
+
         return noteRepository.save(updatedNote)
     }
 
@@ -52,7 +65,7 @@ class NoteService {
     }
 
     private fun findCategoryById(categoryId: Int): Category? {
-        val result: Optional<Category> = categoryRepository.findById(categoryId)
+        val result = categoryRepository.findById(categoryId)
 
         if (result.isEmpty) return null
 

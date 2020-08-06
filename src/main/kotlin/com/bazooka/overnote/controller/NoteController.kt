@@ -19,47 +19,31 @@ class NoteController {
     @Autowired
     private lateinit var entityValidationService: EntityValidationService
 
-    @GetMapping("/notes")
-    fun getAllNotes(): Iterable<Note> =
-            noteService.findAll()
+    @PostMapping("/notes")
+    fun createNote(@Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
+        if (errors.hasErrors()) return entityValidationService.validateFields(errors)
 
-    @PostMapping("/categories/{categoryId}/notes")
-    fun createNewNote(@PathVariable categoryId: Int,
-                        @Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
+        val newNote = noteService.saveNote(note)
 
-        if (errors.hasErrors()) {
-            return entityValidationService.validateFields(errors)
-        }
-
-        val newNote = noteService.saveNote(categoryId, note)
         return ResponseEntity.ok(newNote)
     }
 
+    @GetMapping("/notes")
+    fun getNotes(): Iterable<Note> =
+            noteService.findAll()
+
     @GetMapping("/notes/{id}")
-    fun getNoteById(@PathVariable(value = "id") noteId: Int): ResponseEntity<Note> {
+    fun getNote(@PathVariable(value = "id") noteId: Int): ResponseEntity<Note> {
         val note: Note = noteService.findNoteById(noteId)
         return ResponseEntity.ok().body(note)
     }
 
-    @GetMapping("/categories/{categoryId}/notes")
-    fun getNotesByCategoryId(@PathVariable categoryId: Int): Iterable<Note> =
-            noteService.findNotesByCategoryId(categoryId)
-
-    @PutMapping("categories/{categoryId}/notes/{noteId}")
-    fun updateNoteById(@PathVariable categoryId: Int, @PathVariable noteId: Int,
-                        @Valid @RequestBody newNote: Note, errors: Errors): ResponseEntity<*> {
-
-        if (errors.hasErrors()) {
-            return entityValidationService.validateFields(errors)
-        }
-
-        val updatedNote: Note = noteService.updateNoteById(categoryId, noteId, newNote)
-        return ResponseEntity.ok().body(updatedNote)
-    }
+    // TODO: Add PUT request
 
     @DeleteMapping("/notes/{id}")
-    fun deleteNoteById(@PathVariable(value = "id") noteId: Int): ResponseEntity<Void> {
+    fun deleteNote(@PathVariable(value = "id") noteId: Int): ResponseEntity<Void> {
         noteService.deleteNoteById(noteId)
+
         return ResponseEntity.ok().build()
     }
 }
