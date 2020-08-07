@@ -21,29 +21,40 @@ class NoteController {
 
     @PostMapping("/notes")
     fun createNote(@Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
-        if (errors.hasErrors()) return entityValidationService.validateFields(errors)
+        if (errors.hasErrors()) {
+            return entityValidationService.validateFields(errors)
+        }
 
         val newNote = noteService.saveNote(note)
-
         return ResponseEntity.ok(newNote)
     }
 
     @GetMapping("/notes")
     fun getNotes(): Iterable<Note> =
-            noteService.findAll()
+        noteService.findAll()
+
 
     @GetMapping("/notes/{id}")
-    fun getNote(@PathVariable(value = "id") noteId: Int): ResponseEntity<Note> {
-        val note: Note = noteService.findNoteById(noteId)
+    fun getNote(@PathVariable id: Int): ResponseEntity<Note> {
+        val note: Note = noteService.findNoteById(id)
         return ResponseEntity.ok().body(note)
     }
 
-    // TODO: Add PUT request
+    @PutMapping("/notes/{id}")
+    fun updateNoteById(@PathVariable id: Int,
+                       @Valid @RequestBody note: Note, errors: Errors): ResponseEntity<*> {
 
-    @DeleteMapping("/notes/{id}")
-    fun deleteNote(@PathVariable(value = "id") noteId: Int): ResponseEntity<Void> {
-        noteService.deleteNoteById(noteId)
+        if (errors.hasErrors()) {
+            return entityValidationService.validateFields(errors)
+        }
 
+        val updatedNote: Note = noteService.updateNoteById(note, id)
+        return ResponseEntity.ok().body(updatedNote)
+    }
+
+    @DeleteMapping("notes/{id}")
+    fun deleteNote(@PathVariable id: Int): ResponseEntity<Void> {
+        noteService.deleteNoteById(id)
         return ResponseEntity.ok().build()
     }
 }
