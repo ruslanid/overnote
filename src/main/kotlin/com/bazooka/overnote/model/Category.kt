@@ -1,6 +1,6 @@
 package com.bazooka.overnote.model
 
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonBackReference
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank
 @Table(name="categories")
 data class Category(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
     @Column(nullable = false)
