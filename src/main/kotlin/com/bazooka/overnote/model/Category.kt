@@ -11,9 +11,9 @@ data class Category(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
-    @Column(nullable = false)
-    @field: NotBlank(message = "Category name cannot be blank")
-    val name: String?,
+    @Column(nullable = false, unique = true)
+    @field: NotBlank(message = "Category cannot be blank")
+    val title: String?,
 
     @JsonBackReference
     @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, mappedBy = "category")

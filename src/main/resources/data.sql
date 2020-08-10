@@ -1,1 +1,1 @@
-INSERT INTO categories (name) VALUES ('Others')
+INSERT INTO categories (title) VALUES ('Others')

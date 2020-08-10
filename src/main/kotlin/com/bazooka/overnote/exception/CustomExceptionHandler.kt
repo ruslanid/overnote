@@ -15,4 +15,10 @@ class CustomExceptionHandler: ResponseEntityExceptionHandler() {
         val errorResponse = ResourceNotFoundResponse(e.message!!)
         return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
     }
+
+    @ExceptionHandler
+    fun handleCategoryDuplication(e: CategoryDuplicationException, request: WebRequest): ResponseEntity<CategoryDuplicationResponse> {
+        val errorResponse = CategoryDuplicationResponse(e.message!!)
+        return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
+    }
 }

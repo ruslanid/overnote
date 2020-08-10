@@ -1,9 +1,11 @@
 package com.bazooka.overnote.service
 
+import com.bazooka.overnote.exception.CategoryDuplicationException
 import com.bazooka.overnote.exception.ResourceNotFoundException
 import com.bazooka.overnote.model.Category
 import com.bazooka.overnote.repository.CategoryRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -16,8 +18,13 @@ class CategoryService {
   fun findAll(): Iterable<Category> =
           categoryRepository.findAll()
 
-  fun saveCategory(category: Category): Category =
-          categoryRepository.save(category)
+  fun saveCategory(category: Category): Category {
+    try {
+      return categoryRepository.save(category)
+    } catch (e: DataIntegrityViolationException) {
+      throw CategoryDuplicationException("Category already exists")
+    }
+  }
 
   fun findCategoryById(id: Int): Category {
     val result: Optional<Category> = categoryRepository.findById(id)
@@ -30,7 +37,7 @@ class CategoryService {
 
   fun updateCategoryById(id: Int, newCategory: Category): Category {
     val oldCategory = findCategoryById(id)
-    val updatedCategory = oldCategory.copy(name = newCategory.name)
+    val updatedCategory = oldCategory.copy(title = newCategory.title)
     return saveCategory(updatedCategory)
   }
 

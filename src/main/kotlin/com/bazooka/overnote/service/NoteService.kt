@@ -18,7 +18,7 @@ class NoteService {
     private lateinit var categoryRepository: CategoryRepository
 
     fun saveNote(note: Note): Note {
-        val result = categoryRepository.findByName("Others")
+        val result = categoryRepository.findByTitle("Others")
 
         if (result.isEmpty)
             throw ResourceNotFoundException("Default category with name 'Others' was not found.")
@@ -42,7 +42,7 @@ class NoteService {
 
     fun updateNoteById(newNote: Note, id: Int): Note {
         val oldNote = findNoteById(id)
-        val updatedNote = oldNote.copy(title = newNote.title, body = newNote.body)
+        val updatedNote = oldNote.copy(title = newNote.title, description = newNote.description)
 
         return noteRepository.save(updatedNote)
     }
