@@ -12,9 +12,6 @@ class CategoryNoteService {
   private lateinit var categoryService: CategoryService
 
   @Autowired
-  private  lateinit var noteService: NoteService
-
-  @Autowired
   private lateinit var noteRepository: NoteRepository
 
     fun saveCategoryNote(categoryId: Int, note: Note): Note {

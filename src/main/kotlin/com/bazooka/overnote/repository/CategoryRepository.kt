@@ -7,5 +7,5 @@ import java.util.*
 
 @Repository
 interface CategoryRepository : CrudRepository<Category, Int> {
-  fun findByName(s: String): Optional<Category>
+  fun findByTitle(s: String): Optional<Category>
 }

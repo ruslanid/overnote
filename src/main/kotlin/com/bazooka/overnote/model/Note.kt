@@ -17,7 +17,7 @@ data class Note(
     val title: String?,
 
     @Column(length = 2000)
-    val body: String?,
+    val description: String?,
 
     @Column(name = "created_at", updatable = false)
     var createdAt: Date?,
