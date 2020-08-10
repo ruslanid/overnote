@@ -1,6 +1,6 @@
 package com.bazooka.overnote.model
 
-import com.fasterxml.jackson.annotation.*
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 @Table(name="notes")
 data class Note(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
     @Column(nullable = false)
