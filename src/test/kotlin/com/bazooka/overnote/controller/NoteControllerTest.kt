@@ -1,5 +1,6 @@
 package com.bazooka.overnote.controller
 
+import com.bazooka.overnote.model.Category
 import com.bazooka.overnote.model.Note
 import com.bazooka.overnote.service.EntityValidationService
 import com.bazooka.overnote.service.NoteService
@@ -9,7 +10,6 @@ import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -33,9 +33,46 @@ internal class NoteControllerTest {
 
     @BeforeEach
     fun setUp() {
-        val note1 = Note(1, "Title 1", "Body 1", null, null)
-        val note2 = Note(2, "Title 2", "Body 2", null, null)
+
+        val category = Category(1, "Others")
+        val note1 = Note(1, "Title 1", "Description 1", null, null, category)
+        val note2 = Note(2, "Title 2", "Description 2", null, null, category)
         notes = arrayListOf(note1, note2)
+    }
+
+    @Test
+    @DisplayName("createNewNoteValid()")
+    fun createNewNoteValid() {
+        `when`(noteService.saveNote(any())).thenReturn(notes[0])
+
+        mockMvc.perform(post("/api/notes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(Note(0, "Title 1", "Description 1", null, null, null))))
+            .andExpect(status().isOk)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap)
+            .andExpect(jsonPath("$.id", `is`(1)))
+            .andExpect(jsonPath("$.title", `is`("Title 1")))
+            .andExpect(jsonPath("$.category.id", `is`(1)))
+            .andExpect(jsonPath("$.category.title", `is`("Others")))
+
+        verify(noteService, times(1)).saveNote(any())
+    }
+
+    @Test
+    @DisplayName("createNewNoteNotValid()")
+    fun createNewNoteNotValid() {
+        // TODO: verify invocation of entityValidationService
+
+        mockMvc.perform(post("/api/notes")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(Note(0, null, "Description 1", null, null, null))))
+            .andExpect(status().isBadRequest)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$").isMap)
+            .andExpect(jsonPath("$.title", `is`("Title cannot be blank")))
+
+        verify(noteService, never()).saveNote(any())
     }
 
     @Test
@@ -50,43 +87,14 @@ internal class NoteControllerTest {
             .andExpect(jsonPath("$.length()", `is`(2)))
             .andExpect(jsonPath("$[0].id", `is`(1)))
             .andExpect(jsonPath("$[0].title", `is`("Title 1")))
+            .andExpect(jsonPath("$[0].category.id", `is`(1)))
+            .andExpect(jsonPath("$[0].category.title", `is`("Others")))
             .andExpect(jsonPath("$[1].id", `is`(2)))
             .andExpect(jsonPath("$[1].title", `is`("Title 2")))
+            .andExpect(jsonPath("$[1].category.id", `is`(1)))
+            .andExpect(jsonPath("$[1].category.title", `is`("Others")))
 
         verify(noteService, times(1)).findAll()
-    }
-
-    @Test
-    @DisplayName("createNewNoteValid()")
-    fun createNewNoteValid() {
-        `when`(noteService.saveNote(any())).thenReturn(notes[0])
-
-        mockMvc.perform(post("/api/notes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(Note(0, "Title 1", "Body 1", null, null))))
-            .andExpect(status().isOk)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$").isMap)
-            .andExpect(jsonPath("$.id", `is`(1)))
-            .andExpect(jsonPath("$.title", `is`("Title 1")))
-
-        verify(noteService, times(1)).saveNote(any())
-    }
-
-    @Test
-    @DisplayName("createNewNoteNotValid()")
-    fun createNewNoteNotValid() {
-        // TODO: verify invocation of entityValidationService
-
-         mockMvc.perform(post("/api/notes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(Note(0, null, "Body 1", null, null))))
-             .andExpect(status().isBadRequest)
-             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-             .andExpect(jsonPath("$").isMap)
-             .andExpect(jsonPath("$.title", `is`("Title cannot be blank")))
-
-        verify(noteService, never()).saveNote(any())
     }
 
     @Test
@@ -100,6 +108,8 @@ internal class NoteControllerTest {
             .andExpect(jsonPath("$").isMap)
             .andExpect(jsonPath("$.id", `is`(1)))
             .andExpect(jsonPath("$.title", `is`("Title 1")))
+            .andExpect(jsonPath("$.category.id", `is`(1)))
+            .andExpect(jsonPath("$.category.title", `is`("Others")))
 
         verify(noteService, times(1)).findNoteById(anyInt())
     }
@@ -107,20 +117,21 @@ internal class NoteControllerTest {
     @Test
     @DisplayName("updateNoteByIdValid()")
     fun updateNoteByIdValid() {
-        val updatedNote = Note(1, "Title 22", "Body 22", null, null)
+        val category = Category(1, "Others")
+        val updatedNote = Note(1, "Title 22", "Description 22", null, null, category)
 
-        `when`(noteService.updateNoteById(anyInt(), any())).thenReturn(updatedNote)
+        `when`(noteService.updateNoteById(any(), anyInt())).thenReturn(updatedNote)
 
         mockMvc.perform(put("/api/notes/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(Note(1, "Title 22", "Body 22", null, null))))
+                .content(asJsonString(Note(1, "Title 22", "Description 22", null, null, category))))
             .andExpect(status().isOk)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$").isMap)
             .andExpect(jsonPath("$.id", `is`(1)))
             .andExpect(jsonPath("$.title", `is`("Title 22")))
 
-        verify(noteService, times(1)).updateNoteById(anyInt(), any())
+        verify(noteService, times(1)).updateNoteById(any(), anyInt())
     }
 
     @Test
@@ -130,7 +141,7 @@ internal class NoteControllerTest {
 
         mockMvc.perform(put("/api/notes/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(Note(1, "", "Body 1", null, null))))
+                .content(asJsonString(Note(1, "", "Description 1", null, null, Category(1, "Others")))))
             .andExpect(status().isBadRequest)
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$").isMap)

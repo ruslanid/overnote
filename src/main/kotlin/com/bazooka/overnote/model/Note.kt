@@ -28,7 +28,7 @@ data class Note(
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    var category: Category? = null
+    var category: Category?
 
 ) {
 
