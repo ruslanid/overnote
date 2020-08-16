@@ -27,8 +27,12 @@ class NoteService {
         return noteRepository.save(note)
     }
 
-    fun findAll(): Iterable<Note> =
-            noteRepository.findAll()
+    fun findAll(q: String): Iterable<Note> {
+        if (q == "recent")
+            return noteRepository.findFirst10ByOrderByUpdatedAtDesc()
+
+        return noteRepository.findAll()
+    }
 
 
     fun findNoteById(id: Int): Note {
