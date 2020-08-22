@@ -30,8 +30,8 @@ class NoteController {
     }
 
     @GetMapping("/notes")
-    fun getNotes(@RequestParam q: String): Iterable<Note> =
-        noteService.findAll(q)
+    fun getNotes(): Iterable<Note> =
+        noteService.findAll()
 
     @GetMapping("/notes/{id}")
     fun getNote(@PathVariable id: Int): ResponseEntity<Note> {

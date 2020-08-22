@@ -10,6 +10,4 @@ interface NoteRepository : CrudRepository<Note, Int> {
 
   fun findByCategory(category: Category): Iterable<Note>
 
-  fun findFirst10ByOrderByUpdatedAtDesc(): Iterable<Note>
-
 }
