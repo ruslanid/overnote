@@ -2,7 +2,6 @@ package com.bazooka.overnote.service
 
 import com.bazooka.overnote.exception.ResourceNotFoundException
 import com.bazooka.overnote.model.Note
-import com.bazooka.overnote.repository.CategoryRepository
 import com.bazooka.overnote.repository.NoteRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -14,16 +13,7 @@ class NoteService {
     @Autowired
     private lateinit var noteRepository: NoteRepository
 
-    @Autowired
-    private lateinit var categoryRepository: CategoryRepository
-
     fun saveNote(note: Note): Note {
-        val result = categoryRepository.findByTitle("Others")
-
-        if (result.isEmpty)
-            throw ResourceNotFoundException("Default category with name 'Others' was not found.")
-
-        note.category = result.get()
         return noteRepository.save(note)
     }
 
